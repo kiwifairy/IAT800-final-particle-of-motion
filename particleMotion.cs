@@ -31,7 +31,7 @@ public class particleMotion : MonoBehaviour
 	private void LateUpdate ()
 	{
 		int numParticlesAlive = m_System.GetParticles (points);
-		int which = (Time.frameCount*7 )% m_System.maxParticles;   //* a prime number to adjust the lagging tail length
+		int which = (Time.frameCount/3 )% m_System.maxParticles;   //divide a prime number to adjust the lagging tail length and dying time
 		positions [which] = Camera.main.ScreenPointToRay (Input.mousePosition).GetPoint (10);  // kinect: change this to the location of the child of impaired joint
 		float movedDistance = Vector3.Distance (positions [which], positions [(which + 1) % positions.Length]);
 		//particles disappear after stop of motion
@@ -44,7 +44,9 @@ public class particleMotion : MonoBehaviour
 		for (int i = 0; i < numParticlesAlive; i++) {
 			// which+1 is the smallest (the oldest in the array)
 			int index = (which + 1 + i) % m_System.maxParticles;
-			points [i].position = positions[index]+ randomPos[i]; //positions[i] shows another effect
+			points [i].position = positions[index]+ randomPos[i]; 
+			points[i].size = pointSize *i / numParticlesAlive ;
+			points[i].color = new Color(1f,1f,1f,0.05f +0.1f*i / numParticlesAlive/2);
 		}
 		// Apply the particle changes to the particle system
 		m_System.SetParticles (points, numParticlesAlive);
